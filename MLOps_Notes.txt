@@ -1,0 +1,424 @@
+MLflow:
+https://mlflow.org/
+
+Install Package:
+pip install mlflow
+
+Local run:
+(mlenv) C:\Users\Abhishek_Jaiswal\Documents\TR_Project\AI_Projects\MMM\DS_DSA>mlflow ui
+INFO:waitress:Serving on http://127.0.0.1:5000
+
+===============================================================================================================================================
+
+Data Versioning Using DVC:
+https://dvc.org/doc
+
+Steps to Set Up DVC in a Python Project
+1. Install DVC:
+pip install dvc
+
+2. Initialize DVC in your project directory:
+dvc init
+
+3. Add a dataset to DVC: Assuming you have a dataset in a file called data.csv, you can add it to DVC as follows:
+dvc add data.csv
+
+
+This command will:
+Track the file with DVC.
+Create a .dvc file (data.csv.dvc) to store metadata about the dataset.
+
+4. Create a DVC Pipeline: Let's say you have a simple pipeline where you train a model based on data.csv and save the model to model.pkl.
+First, write a script train.py to train your model:
+# train.py
+import pandas as pd
+from sklearn.linear_model import LogisticRegression
+import pickle
+
+# Load the dataset
+data = pd.read_csv('data.csv')
+X = data.drop('target', axis=1)
+y = data['target']
+
+# Train the model
+model = LogisticRegression()
+model.fit(X, y)
+
+# Save the model
+with open('model.pkl', 'wb') as f:
+    pickle.dump(model, f)
+
+Then, define a DVC pipeline stage to run the training:
+dvc run -n train \
+-d train.py -d data.csv \
+-o model.pkl \
+python train.py
+
+This command creates a DVC pipeline stage named train, which:
+
+Depends on train.py and data.csv.
+Outputs model.pkl.
+
+5. Track the DVC Files with Git: DVC works alongside Git to track code and DVC files. Add the DVC files to Git:
+git add data.csv.dvc train.py dvc.yaml .gitignore
+git commit -m "Add initial DVC pipeline"
+
+6. Push Data and Models to Remote Storage: Set up remote storage (e.g., AWS S3, Google Drive) for storing large files:
+dvc remote add -d myremote s3://mybucket/path
+dvc push
+
+7. Reproduce the Pipeline: If you or someone else makes changes and needs to rerun the pipeline:
+dvc repro
+
+
+Full Example Summary
+Install and initialize DVC:
+pip install dvc
+dvc init
+
+Add and track dataset:
+dvc add data.csv
+git add data.csv.dvc .gitignore
+git commit -m "Track dataset with DVC"
+
+Create a Python script (train.py):
+import pandas as pd
+from sklearn.linear_model import LogisticRegression
+import pickle
+
+data = pd.read_csv('data.csv')
+X = data.drop('target', axis=1)
+y = data['target']
+
+model = LogisticRegression()
+model.fit(X, y)
+
+with open('model.pkl', 'wb') as f:
+    pickle.dump(model, f)
+
+Run DVC pipeline:
+dvc run -n train -d train.py -d data.csv -o model.pkl python train.py
+git add train.py dvc.yaml dvc.lock
+git commit -m "Add training stage to DVC pipeline"
+
+
+Set up remote storage and push:
+dvc remote add -d myremote s3://mybucket/path
+dvc push
+git add .dvc/config
+git commit -m "Configure remote storage"
+
+
+===============================================================================================================================================
+Git
+Overview of Git and GitHub for Code Version Control
+Git:
+Git is a distributed version control system that tracks changes in your code and allows multiple developers to work together on a project.
+It lets you create branches for different features, revert changes, and keep a history of your code.
+
+GitHub:
+GitHub is a web-based platform for hosting Git repositories. It facilitates collaboration by providing tools for code review, issue tracking, and project management.
+It also offers features like pull requests, which allow for code review before merging changes into the main codebase.
+
+Step-by-Step Guide with Code Examples
+1. Initialize a Git Repository
+Start by creating a new Git repository in your project directory.
+# Navigate to your project directory
+cd your-project-directory
+
+# Initialize Git repository
+git init
+
+2. Add and Commit Files
+Add your project files to the repository and make an initial commit.
+# Stage all files for commit
+git add .
+
+# Commit the files with a message
+git commit -m "Initial commit"
+
+3. Create a GitHub Repository
+Go to GitHub and create a new repository. Follow these steps:
+- Click on the "+" icon in the top right corner and select "New repository."
+- Give your repository a name, and choose whether it will be public or private.
+- Do not initialize with a README, .gitignore, or license since we already have a local repository.
+
+4. Link Local Repository to GitHub
+After creating the repository on GitHub, link your local repository to it.
+# Add the GitHub repository as a remote
+git remote add origin https://github.com/yourusername/your-repo.git
+
+# Push the local repository to GitHub
+git branch -M main
+git push -u origin main
+
+origin: The name of the remote repository.
+main: The name of the main branch (you might need to rename master to main depending on your Git version).
+
+5. Making Changes and Committing
+When you make changes to your code, follow these steps to update the repository:
+# Stage the changed files
+git add changed_file.py
+
+# Commit the changes with a message
+git commit -m "Describe what you changed"
+
+6. Pushing Changes to GitHub
+After committing your changes locally, push them to GitHub:
+git push
+
+7. Collaborating with Others
+To collaborate with others on GitHub:
+a. Cloning a Repository: If someone else wants to work on the project, they can clone it:
+git clone https://github.com/yourusername/your-repo.git
+
+
+b. Creating Branches: It's a good practice to create branches for different features:
+git checkout -b new-feature
+
+After making changes, push the branch:
+git push -u origin new-feature
+
+c. Creating Pull Requests:
+- On GitHub, you can create a pull request to merge changes from your branch into the main branch.
+- This allows for code review and discussion before the changes are merged.
+
+d. Merging Changes: After the pull request is approved, you can merge the changes:
+git checkout main
+git merge new-feature
+
+e. Pulling Latest Changes: To get the latest changes from the main branch:
+git pull origin main
+
+===============================================================
+===============================================================
+Here's a comprehensive list of commonly used Git commands, along with explanations and examples.
+
+### Basic Git Commands
+
+1. **`git init`**
+   - **Function**: Initializes a new Git repository in your project directory.
+   - **Example**:
+     ```bash
+     git init
+     ```
+   - **Explanation**: This command sets up a new `.git` directory, which tracks the history of your project.
+
+2. **`git clone`**
+   - **Function**: Clones an existing Git repository from a remote location (e.g., GitHub) to your local machine.
+   - **Example**:
+     ```bash
+     git clone https://github.com/username/repository.git
+     ```
+   - **Explanation**: This creates a copy of the repository on your local machine.
+
+3. **`git add`**
+   - **Function**: Stages changes (new, modified, or deleted files) for the next commit.
+   - **Example**:
+     ```bash
+     git add file1.py
+     git add .
+     ```
+   - **Explanation**: The first example stages `file1.py` for the next commit, while the second stages all changes in the directory.
+
+4. **`git commit`**
+   - **Function**: Records the staged changes in the local repository with a message describing the changes.
+   - **Example**:
+     ```bash
+     git commit -m "Added feature X"
+     ```
+   - **Explanation**: Commits the staged changes with a descriptive message.
+
+5. **`git status`**
+   - **Function**: Displays the state of the working directory and staging area.
+   - **Example**:
+     ```bash
+     git status
+     ```
+   - **Explanation**: Shows which files are staged for commit, which are modified, and which are untracked.
+
+6. **`git log`**
+   - **Function**: Shows the commit history for the current branch.
+   - **Example**:
+     ```bash
+     git log
+     ```
+   - **Explanation**: Displays the history of commits, including the commit hash, author, date, and message.
+
+7. **`git diff`**
+   - **Function**: Shows the differences between files in the working directory and the staging area, or between commits.
+   - **Example**:
+     ```bash
+     git diff
+     git diff HEAD
+     ```
+   - **Explanation**: The first command shows changes not yet staged, while the second shows changes since the last commit.
+
+### Branching and Merging
+
+8. **`git branch`**
+   - **Function**: Lists, creates, or deletes branches.
+   - **Examples**:
+     ```bash
+     git branch
+     git branch new-feature
+     git branch -d old-feature
+     ```
+   - **Explanation**: The first command lists all branches, the second creates a new branch called `new-feature`, and the third deletes the `old-feature` branch.
+
+9. **`git checkout`**
+   - **Function**: Switches to another branch or restores working tree files.
+   - **Examples**:
+     ```bash
+     git checkout main
+     git checkout -b new-feature
+     ```
+   - **Explanation**: The first command switches to the `main` branch, and the second creates and switches to a new branch called `new-feature`.
+
+10. **`git merge`**
+    - **Function**: Merges changes from one branch into the current branch.
+    - **Example**:
+      ```bash
+      git merge new-feature
+      ```
+    - **Explanation**: Merges the changes from the `new-feature` branch into the current branch.
+
+11. **`git rebase`**
+    - **Function**: Reapplies commits on top of another base tip.
+    - **Example**:
+      ```bash
+      git rebase main
+      ```
+    - **Explanation**: Applies the changes from the current branch onto the `main` branch, effectively replaying your changes on top of the main branch.
+
+### Remote Repositories
+
+12. **`git remote`**
+    - **Function**: Manages remote repository connections.
+    - **Examples**:
+      ```bash
+      git remote -v
+      git remote add origin https://github.com/username/repository.git
+      git remote remove origin
+      ```
+    - **Explanation**: The first command lists remote repositories, the second adds a new remote named `origin`, and the third removes the `origin` remote.
+
+13. **`git fetch`**
+    - **Function**: Downloads objects and refs from a remote repository.
+    - **Example**:
+      ```bash
+      git fetch origin
+      ```
+    - **Explanation**: Downloads updates from the `origin` remote but does not merge them into your current branch.
+
+14. **`git pull`**
+    - **Function**: Fetches from a remote repository and merges into the current branch.
+    - **Example**:
+      ```bash
+      git pull origin main
+      ```
+    - **Explanation**: Fetches the latest changes from the `main` branch of the `origin` remote and merges them into the current branch.
+
+15. **`git push`**
+    - **Function**: Uploads local commits to a remote repository.
+    - **Example**:
+      ```bash
+      git push origin main
+      ```
+    - **Explanation**: Pushes your local `main` branch commits to the `origin` remote.
+
+### Undoing Changes
+
+16. **`git reset`**
+    - **Function**: Resets the current branch to a specific state, discarding or keeping changes.
+    - **Examples**:
+      ```bash
+      git reset --soft HEAD~1
+      git reset --hard HEAD~1
+      ```
+    - **Explanation**: The first example resets the last commit but keeps changes in the staging area, while the second resets and discards all changes.
+
+17. **`git revert`**
+    - **Function**: Creates a new commit that undoes the changes from a previous commit.
+    - **Example**:
+      ```bash
+      git revert <commit-hash>
+      ```
+    - **Explanation**: Reverts the changes from the specified commit by creating a new commit.
+
+18. **`git stash`**
+    - **Function**: Temporarily stores changes in the working directory that are not yet committed.
+    - **Examples**:
+      ```bash
+      git stash
+      git stash pop
+      ```
+    - **Explanation**: The first command stashes changes, and the second restores them.
+
+19. **`git clean`**
+    - **Function**: Removes untracked files from the working directory.
+    - **Example**:
+      ```bash
+      git clean -f
+      ```
+    - **Explanation**: Forcefully removes untracked files.
+
+### Additional Useful Commands
+
+20. **`git tag`**
+    - **Function**: Creates, lists, or deletes tags.
+    - **Examples**:
+      ```bash
+      git tag
+      git tag v1.0
+      git tag -d v1.0
+      ```
+    - **Explanation**: The first command lists all tags, the second creates a tag `v1.0`, and the third deletes it.
+
+21. **`git show`**
+    - **Function**: Displays information about a commit.
+    - **Example**:
+      ```bash
+      git show <commit-hash>
+      ```
+    - **Explanation**: Shows details of the specified commit.
+
+22. **`git blame`**
+    - **Function**: Shows who made changes to each line in a file.
+    - **Example**:
+      ```bash
+      git blame file1.py
+      ```
+    - **Explanation**: Annotates each line of the file with the commit and author responsible for the change.
+
+23. **`git cherry-pick`**
+    - **Function**: Applies a commit from one branch to another.
+    - **Example**:
+      ```bash
+      git cherry-pick <commit-hash>
+      ```
+    - **Explanation**: Picks a commit from another branch and applies it to the current branch.
+
+24. **`git bisect`**
+    - **Function**: Uses binary search to find the commit that introduced a bug.
+    - **Examples**:
+      ```bash
+      git bisect start
+      git bisect bad
+      git bisect good <commit-hash>
+      ```
+    - **Explanation**: Starts the bisect process, marks the current commit as bad, and an earlier commit as good. Git then helps you find the commit that introduced the bug.
+
+### Summary
+
+- **Initialize Repository**: `git init`
+- **Stage Files**: `git add .`
+- **Commit Changes**: `git commit -m "message"`
+- **Check Status**: `git status`
+- **Check Log**: `git log`
+- **Work with Branches**: `git branch`, `git checkout`, `git merge`
+- **Remote Operations**: `git remote`, `git fetch`, `git pull`, `git push`
+- **Undo Changes**: `git reset`, `git revert`, `git stash`, `git clean`
+- **Advanced Operations**: `git tag`, `git show`, `git blame`, `git cherry-pick`, `git bisect`
+
+These commands cover a wide range of Git operations that you can use for effective version control and collaboration in your projects.
